@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-12T03:07:05.770Z",
+  "generatedAt": "2026-06-12T03:46:05.272Z",
   "source": "x-api-v2-user-tweets",
   "profile": {
     "id": "2681209458",
@@ -9,8 +9,8 @@
     "location": "San Francisco, CA",
     "verified": false,
     "publicMetrics": {
-      "followers_count": 117,
-      "following_count": 560,
+      "followers_count": 118,
+      "following_count": 562,
       "tweet_count": 110,
       "listed_count": 2,
       "like_count": 307,
@@ -536,7 +536,7 @@
       "reposts": 0,
       "likes": 2,
       "bookmarks": 0,
-      "impressions": 82,
+      "impressions": 84,
       "externalReplies": 0,
       "follows": 0
     },

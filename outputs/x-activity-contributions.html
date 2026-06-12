@@ -627,13 +627,6 @@
           <option value="90">Last 90 days</option>
         </select>
       </label>
-      <label class="select-wrap">
-        <span>Data</span>
-        <select id="accountSelect">
-          <option value="hadley">Hadley public profile</option>
-          <option value="demo">Demo activity</option>
-        </select>
-      </label>
     </section>
 
     <section class="profile-card" aria-label="X profile snapshot">
@@ -737,16 +730,7 @@
       following: 559,
       followers: 116
     };
-    const accountProfiles = {
-      hadley: { base: 0, bursts: [], name: "Hadley public profile", real: true },
-      demo: { base: 0.58, bursts: [42, 88, 123, 197, 244, 292, 330], name: "Demo activity" }
-    };
-    let currentData = generateData("hadley");
-
-    function seededNoise(seed) {
-      const x = Math.sin(seed * 999.91) * 10000;
-      return x - Math.floor(x);
-    }
+    let currentData = generateEmptyProfileDays();
 
     function formatDate(date) {
       return date.toISOString().slice(0, 10);
@@ -756,53 +740,21 @@
       return date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
     }
 
-    function generateData(profileKey) {
-      const profile = accountProfiles[profileKey];
+    function generateEmptyProfileDays() {
       const days = [];
       for (let i = 364; i >= 0; i--) {
         const date = new Date(today.getTime() - i * dayMs);
-        if (profile.real) {
-          days.push({
-            date: formatDate(date),
-            posts: 0,
-            replies: 0,
-            reposts: 0,
-            likes: 0,
-            bookmarks: 0,
-            impressions: 0,
-            externalReplies: 0,
-            follows: 0,
-            source: "public-profile-shell"
-          });
-          continue;
-        }
-        const idx = 364 - i;
-        const weekdayBoost = [0.34, 0.92, 1.04, 1.1, 1.0, 0.86, 0.42][date.getDay()];
-        const seasonal = 0.66 + 0.34 * Math.sin((idx / 365) * Math.PI * 2 + 0.35);
-        const burst = profile.bursts.some(day => Math.abs(day - idx) <= 7) ? 1.7 : 1;
-        const activity = profile.base * weekdayBoost * seasonal * burst;
-        const n1 = seededNoise(idx + profile.base * 100);
-        const n2 = seededNoise(idx * 3 + 77);
-        const n3 = seededNoise(idx * 9 + 13);
-        const active = n1 < activity;
-        const posts = active && n2 > 0.54 ? 1 + Math.floor(n3 * 3) : 0;
-        const replies = active ? Math.floor((n2 + activity) * 5) : 0;
-        const reposts = active && n3 > 0.42 ? Math.floor(n1 * 4) : 0;
-        const likes = active ? Math.floor((n1 + n2 + activity) * 9) : 0;
-        const bookmarks = active && n2 > 0.32 ? Math.floor(n3 * 5) : 0;
-        const impressions = posts ? Math.floor((90 + n1 * 2200) * burst) : Math.floor(replies * (8 + n2 * 40));
-        const externalReplies = Math.floor((posts + replies) * n3 * 3);
-        const follows = posts && n1 > 0.82 ? 1 + Math.floor(n2 * 6) : 0;
         days.push({
           date: formatDate(date),
-          posts,
-          replies,
-          reposts,
-          likes,
-          bookmarks,
-          impressions,
-          externalReplies,
-          follows
+          posts: 0,
+          replies: 0,
+          reposts: 0,
+          likes: 0,
+          bookmarks: 0,
+          impressions: 0,
+          externalReplies: 0,
+          follows: 0,
+          source: "public-profile-shell"
         });
       }
       return days;
@@ -914,14 +866,12 @@
       }, { actionPoints: 0, engagementPoints: 0 });
       const active = scores.filter(Boolean).length;
       const windowLabel = document.querySelector("#windowSelect option:checked").textContent.toLowerCase();
-      const selectedProfile = document.querySelector("#accountSelect").value;
-      const profileTotal = selectedProfile === "hadley" ? publicProfile.postCount : total;
       document.querySelector("#totalScore").textContent = total.toLocaleString();
       document.querySelector("#activeDays").textContent = active.toLocaleString();
       document.querySelector("#longestStreak").textContent = parts.actionPoints.toLocaleString();
       document.querySelector("#topDay").textContent = parts.engagementPoints.toLocaleString();
-      if (selectedProfile === "hadley" && total === 0) {
-        document.querySelector("#heatmapTitle").textContent = `${profileTotal.toLocaleString()} public profile posts found, daily activity not exposed by X`;
+      if (total === 0) {
+        document.querySelector("#heatmapTitle").textContent = `${publicProfile.postCount.toLocaleString()} public profile posts found, daily activity not exposed by X`;
         return;
       }
       document.querySelector("#heatmapTitle").textContent = `${total.toLocaleString()} X contributions in the ${windowLabel}`;
@@ -1104,11 +1054,6 @@
     }
 
     document.querySelector("#windowSelect").addEventListener("change", renderAll);
-    document.querySelector("#accountSelect").addEventListener("change", event => {
-      currentData = generateData(event.target.value);
-      renderImportSample();
-      renderAll();
-    });
     document.querySelector("#loadSample").addEventListener("click", renderImportSample);
     document.querySelector("#applyImport").addEventListener("click", applyImport);
     document.querySelector("#fileImport").addEventListener("change", loadSelectedFile);
