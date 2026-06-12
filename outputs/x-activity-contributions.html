@@ -1,0 +1,1121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>X Activity Contributions</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7fbff;
+      --panel: #ffffff;
+      --panel-2: #eef6fb;
+      --text: #23272f;
+      --muted: #63707c;
+      --line: #d8e1e8;
+      --soft-line: #edf3f6;
+      --accent: #9fd0ed;
+      --x: #0f1419;
+      --pink: #f7a6b2;
+      --peach: #f7d7ad;
+      --butter: #fbfab4;
+      --mint: #b5f6c6;
+      --sky: #add5ef;
+      --heat-0: #ecf2f5;
+      --heat-1: #d8f8cf;
+      --heat-2: #b5f6c6;
+      --heat-3: #78d99a;
+      --heat-4: #3f9d6b;
+      --reply: #9b8bdc;
+      --post: #74b8e2;
+      --repost: #67c783;
+      --like: #ec8797;
+      --bookmark: #e5b45f;
+      --shadow: 0 18px 48px rgba(67, 98, 120, 0.12);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0, rgba(247, 251, 255, 0.96) 220px, var(--bg) 100%),
+        linear-gradient(90deg, rgba(247, 166, 178, 0.2), rgba(247, 215, 173, 0.22), rgba(251, 250, 180, 0.2), rgba(181, 246, 198, 0.22), rgba(173, 213, 239, 0.26)),
+        var(--bg);
+      color: var(--text);
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 6px;
+      height: 34px;
+      padding: 0 10px;
+      cursor: pointer;
+    }
+
+    button:hover,
+    select:hover {
+      border-color: #8c959f;
+      background: #f6f8fa;
+    }
+
+    button.active {
+      border-color: var(--x);
+      background: var(--x);
+      color: #fff;
+    }
+
+    .score-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      border: 1px solid rgba(15, 20, 25, 0.1);
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--x), #24313b);
+      color: #fffdf5;
+      padding: 0 13px;
+      font-weight: 650;
+      font-size: 14px;
+      box-shadow: 0 8px 20px rgba(15, 20, 25, 0.14);
+    }
+
+    .app {
+      width: min(1220px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 32px 0 46px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(216, 222, 228, 0.86);
+      border-radius: 12px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(173, 213, 239, 0.18)),
+        var(--panel);
+      padding: 22px 22px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .topbar::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 5px;
+      background: linear-gradient(90deg, var(--pink), var(--peach), var(--butter), var(--mint), var(--sky));
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .subhead {
+      margin: 8px 0 0;
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .x-mark {
+      display: inline-grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--x);
+      color: #fffdf5;
+      font-weight: 800;
+      font-size: 21px;
+      flex: 0 0 auto;
+      box-shadow: 0 10px 28px rgba(15, 20, 25, 0.2);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 16px;
+    }
+
+    .segmented {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      overflow: hidden;
+      background: var(--panel);
+    }
+
+    .segmented button {
+      border: 0;
+      border-radius: 0;
+      border-right: 1px solid var(--line);
+    }
+
+    .segmented button:last-child {
+      border-right: 0;
+    }
+
+    .select-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    select {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      height: 36px;
+      padding: 0 30px 0 10px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.94);
+      padding: 16px 16px;
+      box-shadow: 0 10px 28px rgba(31, 35, 40, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 3px;
+      background: linear-gradient(90deg, var(--pink), var(--peach), var(--mint), var(--sky));
+      opacity: 0.9;
+    }
+
+    .stat:nth-child(2)::before {
+      background: linear-gradient(90deg, var(--mint), var(--sky));
+    }
+
+    .stat:nth-child(3)::before {
+      background: linear-gradient(90deg, var(--sky), var(--mint));
+    }
+
+    .stat:nth-child(4)::before {
+      background: linear-gradient(90deg, var(--peach), var(--pink));
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 30px;
+      font-weight: 720;
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .profile-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.94);
+      padding: 16px 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 28px rgba(31, 35, 40, 0.05);
+    }
+
+    .profile-name {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: baseline;
+      font-weight: 720;
+    }
+
+    .profile-name a {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .profile-name a:hover {
+      text-decoration: underline;
+    }
+
+    .handle {
+      color: var(--muted);
+      font-weight: 520;
+    }
+
+    .profile-bio {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .profile-facts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .profile-status {
+      max-width: 330px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      text-align: right;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.94)),
+        var(--panel);
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(31, 35, 40, 0.06);
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--soft-line);
+    }
+
+    .panel-title {
+      font-weight: 650;
+      font-size: 16px;
+    }
+
+    .panel-note {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: right;
+    }
+
+    .heatmap-shell {
+      overflow-x: auto;
+      padding: 22px 18px 16px;
+    }
+
+    .heatmap {
+      display: grid;
+      grid-template-columns: 36px repeat(53, 13px);
+      grid-template-rows: 18px repeat(7, 13px);
+      gap: 4px;
+      min-width: 948px;
+      align-items: center;
+    }
+
+    .month {
+      color: var(--text);
+      font-size: 13px;
+      align-self: end;
+      padding-bottom: 1px;
+    }
+
+    .weekday {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+      padding-right: 6px;
+    }
+
+    .day {
+      width: 13px;
+      height: 13px;
+      border-radius: 4px;
+      border: 1px solid rgba(27, 31, 36, 0.06);
+      background: var(--heat-0);
+      cursor: default;
+      position: relative;
+    }
+
+    .day[data-level="1"] { background: var(--heat-1); }
+    .day[data-level="2"] { background: var(--heat-2); }
+    .day[data-level="3"] { background: var(--heat-3); }
+    .day[data-level="4"] { background: var(--heat-4); }
+
+    .day:hover {
+      outline: 2px solid #24292f;
+      outline-offset: 1px;
+    }
+
+    .legend-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      min-width: 948px;
+      padding: 14px 0 0 40px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .legend {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend .day {
+      cursor: default;
+    }
+
+    .tooltip {
+      position: fixed;
+      z-index: 10;
+      pointer-events: none;
+      min-width: 210px;
+      max-width: 260px;
+      border: 1px solid #24292f;
+      border-radius: 6px;
+      background: #23272f;
+      color: #fffdf5;
+      padding: 9px 10px;
+      opacity: 0;
+      transform: translate(-50%, -8px);
+      transition: opacity 120ms ease;
+      box-shadow: 0 8px 22px rgba(31, 35, 40, 0.22);
+    }
+
+    .tooltip.show {
+      opacity: 1;
+    }
+
+    .tooltip strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .tooltip span {
+      display: block;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .lower {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .mix {
+      padding: 18px;
+    }
+
+    .mix-row {
+      display: grid;
+      grid-template-columns: 110px 1fr 54px;
+      gap: 14px;
+      align-items: center;
+      margin: 14px 0;
+      font-size: 14px;
+    }
+
+    .bar {
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(173, 213, 239, 0.22);
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      width: var(--w);
+      background: var(--c);
+    }
+
+    .code-panel {
+      padding: 16px;
+    }
+
+    .code-panel summary {
+      cursor: pointer;
+      font-weight: 650;
+      list-style: none;
+    }
+
+    .code-panel summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .code-panel summary::after {
+      content: "Open";
+      float: right;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 520;
+    }
+
+    .code-panel[open] summary::after {
+      content: "Close";
+    }
+
+    .code-panel textarea {
+      width: 100%;
+      min-height: 180px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px;
+      background: #f6f8fa;
+      color: #24292f;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .import-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .file-loader {
+      display: inline-flex;
+      align-items: center;
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      cursor: pointer;
+    }
+
+    .file-loader:hover {
+      border-color: #8c959f;
+      background: #f6f8fa;
+    }
+
+    .file-loader input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .model {
+      margin-top: 16px;
+      border-top: 1px solid var(--soft-line);
+      padding-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .model code {
+      background: #f6f8fa;
+      border: 1px solid var(--soft-line);
+      border-radius: 4px;
+      padding: 1px 4px;
+      color: var(--text);
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        width: min(100vw - 22px, 1180px);
+        padding-top: 18px;
+      }
+
+      .topbar,
+      .panel-head {
+        align-items: flex-start;
+      }
+
+      .summary,
+      .lower,
+      .profile-card {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-status {
+        max-width: none;
+        text-align: left;
+      }
+
+      .toolbar {
+        align-items: stretch;
+      }
+
+      .segmented {
+        width: 100%;
+      }
+
+      .segmented button {
+        flex: 1 1 auto;
+        padding: 0 6px;
+      }
+
+      .select-wrap {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      select {
+        min-width: 170px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="topbar" aria-labelledby="page-title">
+      <div>
+        <h1 id="page-title">X activity contributions</h1>
+        <p class="subhead">A GitHub-style activity map for @hadleycallaway posts, replies, reposts, likes, bookmarks, and the engagement those actions create.</p>
+      </div>
+      <div class="x-mark" aria-label="X">X</div>
+    </section>
+
+    <section class="toolbar" aria-label="Activity controls">
+      <div class="score-pill">Unified contribution score</div>
+      <label class="select-wrap">
+        <span>Window</span>
+        <select id="windowSelect">
+          <option value="365">Last year</option>
+          <option value="180">Last 6 months</option>
+          <option value="90">Last 90 days</option>
+        </select>
+      </label>
+      <label class="select-wrap">
+        <span>Data</span>
+        <select id="accountSelect">
+          <option value="hadley">Hadley public profile</option>
+          <option value="demo">Demo activity</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="profile-card" aria-label="X profile snapshot">
+      <div>
+        <div class="profile-name">
+          <a href="https://x.com/hadleycallaway">Hadley</a>
+          <span class="handle">@hadleycallaway</span>
+        </div>
+        <p class="profile-bio">techno-optimist! currently @sazabi. prev @DoppelHQ @brexHQ @columbia. soon @HarvardHBS.</p>
+        <div class="profile-facts">
+          <span>San Francisco, CA</span>
+          <span>Joined July 2014</span>
+          <span>110 posts</span>
+          <span>559 following</span>
+          <span>116 followers</span>
+        </div>
+      </div>
+      <div class="profile-status" id="profileStatus">Public X only exposed profile-level data in this session. Import an archive or API export to fill exact daily activity.</div>
+    </section>
+
+    <section class="summary" aria-label="Summary statistics">
+      <div class="stat">
+        <span class="stat-value" id="totalScore">0</span>
+        <span class="stat-label">combined contribution points</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="activeDays">0</span>
+        <span class="stat-label">active days</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="longestStreak">0</span>
+        <span class="stat-label">action points</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="topDay">0</span>
+        <span class="stat-label">engagement points</span>
+      </div>
+    </section>
+
+    <section class="panel" aria-label="Contribution heatmap">
+      <div class="panel-head">
+        <div class="panel-title" id="heatmapTitle">0 contributions in the last year</div>
+        <div class="panel-note">Actions and engagement count together</div>
+      </div>
+      <div class="heatmap-shell">
+        <div class="heatmap" id="heatmap" role="img" aria-label="Daily activity contribution heatmap"></div>
+        <div class="legend-row">
+          <span>Counts include public actions and imported private bookmarks.</span>
+          <span class="legend">Less
+            <span class="day" data-level="0"></span>
+            <span class="day" data-level="1"></span>
+            <span class="day" data-level="2"></span>
+            <span class="day" data-level="3"></span>
+            <span class="day" data-level="4"></span>
+            More
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="lower">
+      <div class="panel mix">
+        <div class="panel-title">Activity mix</div>
+        <div id="mixRows"></div>
+        <p class="model">Unified scoring model: <code>post * 6</code>, <code>reply * 3</code>, <code>repost * 2</code>, <code>bookmark * 2</code>, plus engagement from likes, impressions, replies received, and follows.</p>
+      </div>
+
+      <details class="panel code-panel">
+        <summary>Data import</summary>
+        <p class="model">Paste daily JSON later from the X API, a scheduled scraper you control, or the account archive export.</p>
+        <textarea id="importBox" spellcheck="false" aria-label="Import JSON"></textarea>
+        <div class="import-actions">
+          <button id="loadSample">Load sample</button>
+          <button id="applyImport">Apply JSON</button>
+          <label class="file-loader">
+            Load file
+            <input id="fileImport" type="file" accept=".json,application/json">
+          </label>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <div class="tooltip" id="tooltip" role="tooltip"></div>
+
+  <script src="x-activity-data.js"></script>
+  <script>
+    const dayMs = 24 * 60 * 60 * 1000;
+    const today = new Date(2026, 5, 12);
+    const palette = {
+      posts: "var(--post)",
+      replies: "var(--reply)",
+      reposts: "var(--repost)",
+      likes: "var(--like)",
+      bookmarks: "var(--bookmark)"
+    };
+    const publicProfile = {
+      handle: "hadleycallaway",
+      displayName: "Hadley",
+      postCount: 110,
+      following: 559,
+      followers: 116
+    };
+    const accountProfiles = {
+      hadley: { base: 0, bursts: [], name: "Hadley public profile", real: true },
+      demo: { base: 0.58, bursts: [42, 88, 123, 197, 244, 292, 330], name: "Demo activity" }
+    };
+    let currentData = generateData("hadley");
+
+    function seededNoise(seed) {
+      const x = Math.sin(seed * 999.91) * 10000;
+      return x - Math.floor(x);
+    }
+
+    function formatDate(date) {
+      return date.toISOString().slice(0, 10);
+    }
+
+    function readableDate(date) {
+      return date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
+    }
+
+    function generateData(profileKey) {
+      const profile = accountProfiles[profileKey];
+      const days = [];
+      for (let i = 364; i >= 0; i--) {
+        const date = new Date(today.getTime() - i * dayMs);
+        if (profile.real) {
+          days.push({
+            date: formatDate(date),
+            posts: 0,
+            replies: 0,
+            reposts: 0,
+            likes: 0,
+            bookmarks: 0,
+            impressions: 0,
+            externalReplies: 0,
+            follows: 0,
+            source: "public-profile-shell"
+          });
+          continue;
+        }
+        const idx = 364 - i;
+        const weekdayBoost = [0.34, 0.92, 1.04, 1.1, 1.0, 0.86, 0.42][date.getDay()];
+        const seasonal = 0.66 + 0.34 * Math.sin((idx / 365) * Math.PI * 2 + 0.35);
+        const burst = profile.bursts.some(day => Math.abs(day - idx) <= 7) ? 1.7 : 1;
+        const activity = profile.base * weekdayBoost * seasonal * burst;
+        const n1 = seededNoise(idx + profile.base * 100);
+        const n2 = seededNoise(idx * 3 + 77);
+        const n3 = seededNoise(idx * 9 + 13);
+        const active = n1 < activity;
+        const posts = active && n2 > 0.54 ? 1 + Math.floor(n3 * 3) : 0;
+        const replies = active ? Math.floor((n2 + activity) * 5) : 0;
+        const reposts = active && n3 > 0.42 ? Math.floor(n1 * 4) : 0;
+        const likes = active ? Math.floor((n1 + n2 + activity) * 9) : 0;
+        const bookmarks = active && n2 > 0.32 ? Math.floor(n3 * 5) : 0;
+        const impressions = posts ? Math.floor((90 + n1 * 2200) * burst) : Math.floor(replies * (8 + n2 * 40));
+        const externalReplies = Math.floor((posts + replies) * n3 * 3);
+        const follows = posts && n1 > 0.82 ? 1 + Math.floor(n2 * 6) : 0;
+        days.push({
+          date: formatDate(date),
+          posts,
+          replies,
+          reposts,
+          likes,
+          bookmarks,
+          impressions,
+          externalReplies,
+          follows
+        });
+      }
+      return days;
+    }
+
+    function scoreParts(day) {
+      const actionPoints = day.posts * 6 + day.replies * 3 + day.reposts * 2 + day.bookmarks * 2;
+      const engagementPoints = day.likes + Math.round(day.impressions / 75 + day.externalReplies * 3 + day.follows * 12);
+      return {
+        actionPoints,
+        engagementPoints,
+        total: actionPoints + engagementPoints
+      };
+    }
+
+    function scoreDay(day) {
+      return scoreParts(day).total;
+    }
+
+    function levelFor(score, maxScore) {
+      if (!score) return 0;
+      const ratio = score / Math.max(maxScore, 1);
+      if (ratio > 0.72) return 4;
+      if (ratio > 0.46) return 3;
+      if (ratio > 0.22) return 2;
+      return 1;
+    }
+
+    function getVisibleDays() {
+      const windowSize = Number(document.querySelector("#windowSelect").value);
+      return currentData.slice(-windowSize);
+    }
+
+    function getCalendarDays(visible) {
+      const first = new Date(visible[0].date + "T00:00:00");
+      const last = new Date(visible[visible.length - 1].date + "T00:00:00");
+      const start = new Date(first);
+      start.setDate(first.getDate() - first.getDay());
+      const end = new Date(last);
+      end.setDate(last.getDate() + (6 - last.getDay()));
+      const byDate = new Map(visible.map(day => [day.date, day]));
+      const days = [];
+      for (let date = start; date <= end; date = new Date(date.getTime() + dayMs)) {
+        const key = formatDate(date);
+        days.push(byDate.get(key) || { date: key, outside: true, posts: 0, replies: 0, reposts: 0, likes: 0, bookmarks: 0, impressions: 0, externalReplies: 0, follows: 0 });
+      }
+      return days;
+    }
+
+    function renderHeatmap() {
+      const visible = getVisibleDays();
+      const days = getCalendarDays(visible);
+      const heatmap = document.querySelector("#heatmap");
+      heatmap.innerHTML = "";
+      const weeks = Math.ceil(days.length / 7);
+      heatmap.style.gridTemplateColumns = `36px repeat(${weeks}, 13px)`;
+      const monthColumns = new Map();
+      days.forEach((day, index) => {
+        const date = new Date(day.date + "T00:00:00");
+        if (date.getDate() <= 7 && !monthColumns.has(date.getMonth())) {
+          monthColumns.set(date.getMonth(), Math.floor(index / 7) + 2);
+        }
+      });
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      monthColumns.forEach((col, month) => {
+        const node = document.createElement("div");
+        node.className = "month";
+        node.textContent = monthNames[month];
+        node.style.gridColumn = col;
+        node.style.gridRow = "1";
+        heatmap.appendChild(node);
+      });
+      [["Mon", 3], ["Wed", 5], ["Fri", 7]].forEach(([label, row]) => {
+        const node = document.createElement("div");
+        node.className = "weekday";
+        node.textContent = label;
+        node.style.gridColumn = "1";
+        node.style.gridRow = row;
+        heatmap.appendChild(node);
+      });
+      const maxScore = Math.max(...visible.map(day => scoreDay(day)), 1);
+      days.forEach((day, index) => {
+        const date = new Date(day.date + "T00:00:00");
+        const node = document.createElement("div");
+        const score = scoreDay(day);
+        node.className = "day";
+        node.dataset.level = day.outside ? 0 : levelFor(score, maxScore);
+        node.dataset.date = day.date;
+        node.dataset.score = score;
+        node.style.opacity = day.outside ? "0.35" : "1";
+        node.style.gridColumn = Math.floor(index / 7) + 2;
+        node.style.gridRow = date.getDay() + 2;
+        node.addEventListener("mouseenter", event => showTooltip(event, day, score));
+        node.addEventListener("mousemove", moveTooltip);
+        node.addEventListener("mouseleave", hideTooltip);
+        heatmap.appendChild(node);
+      });
+    }
+
+    function renderStats() {
+      const visible = getVisibleDays();
+      const scores = visible.map(day => scoreDay(day));
+      const total = scores.reduce((sum, value) => sum + value, 0);
+      const parts = visible.reduce((sum, day) => {
+        const dayParts = scoreParts(day);
+        sum.actionPoints += dayParts.actionPoints;
+        sum.engagementPoints += dayParts.engagementPoints;
+        return sum;
+      }, { actionPoints: 0, engagementPoints: 0 });
+      const active = scores.filter(Boolean).length;
+      const windowLabel = document.querySelector("#windowSelect option:checked").textContent.toLowerCase();
+      const selectedProfile = document.querySelector("#accountSelect").value;
+      const profileTotal = selectedProfile === "hadley" ? publicProfile.postCount : total;
+      document.querySelector("#totalScore").textContent = total.toLocaleString();
+      document.querySelector("#activeDays").textContent = active.toLocaleString();
+      document.querySelector("#longestStreak").textContent = parts.actionPoints.toLocaleString();
+      document.querySelector("#topDay").textContent = parts.engagementPoints.toLocaleString();
+      if (selectedProfile === "hadley" && total === 0) {
+        document.querySelector("#heatmapTitle").textContent = `${profileTotal.toLocaleString()} public profile posts found, daily activity not exposed by X`;
+        return;
+      }
+      document.querySelector("#heatmapTitle").textContent = `${total.toLocaleString()} X contributions in the ${windowLabel}`;
+    }
+
+    function renderMix() {
+      const visible = getVisibleDays();
+      const totals = visible.reduce((acc, day) => {
+        acc.posts += day.posts;
+        acc.replies += day.replies;
+        acc.reposts += day.reposts;
+        acc.likes += day.likes;
+        acc.bookmarks += day.bookmarks;
+        return acc;
+      }, { posts: 0, replies: 0, reposts: 0, likes: 0, bookmarks: 0 });
+      const max = Math.max(...Object.values(totals), 1);
+      const labels = {
+        posts: "Posts",
+        replies: "Replies",
+        reposts: "Reposts",
+        likes: "Likes",
+        bookmarks: "Bookmarks"
+      };
+      document.querySelector("#mixRows").innerHTML = Object.entries(totals).map(([key, value]) => `
+        <div class="mix-row">
+          <span>${labels[key]}</span>
+          <span class="bar"><span style="--w:${Math.max(2, (value / max) * 100)}%;--c:${palette[key]}"></span></span>
+          <strong>${value.toLocaleString()}</strong>
+        </div>
+      `).join("");
+    }
+
+    function renderImportSample() {
+      const sample = [
+        {
+          date: "2026-06-12",
+          posts: 1,
+          replies: 3,
+          reposts: 0,
+          likes: 12,
+          bookmarks: 2,
+          impressions: 1400,
+          externalReplies: 4,
+          follows: 1
+        },
+        {
+          date: "2026-06-11",
+          posts: 0,
+          replies: 5,
+          reposts: 1,
+          likes: 18,
+          bookmarks: 1,
+          impressions: 360,
+          externalReplies: 2,
+          follows: 0
+        }
+      ];
+      document.querySelector("#importBox").value = JSON.stringify(sample, null, 2);
+    }
+
+    function normalizeImportedPayload(payload) {
+      if (Array.isArray(payload)) return payload;
+      if (Array.isArray(payload.days)) {
+        if (payload.profile) {
+          const metrics = payload.profile.publicMetrics || payload.profile.public_metrics || {};
+          document.querySelector(".profile-name a").textContent = payload.profile.name || publicProfile.displayName;
+          document.querySelector(".handle").textContent = `@${payload.profile.username || publicProfile.handle}`;
+          document.querySelector(".profile-bio").textContent = payload.profile.description || document.querySelector(".profile-bio").textContent;
+          document.querySelector(".profile-facts").innerHTML = [
+            payload.profile.location,
+            metrics.tweet_count !== undefined ? `${Number(metrics.tweet_count).toLocaleString()} posts` : `${publicProfile.postCount} posts`,
+            metrics.following_count !== undefined ? `${Number(metrics.following_count).toLocaleString()} following` : `${publicProfile.following} following`,
+            metrics.followers_count !== undefined ? `${Number(metrics.followers_count).toLocaleString()} followers` : `${publicProfile.followers} followers`
+          ].filter(Boolean).map(item => `<span>${item}</span>`).join("");
+        }
+        if (payload.fetch) {
+          const truncated = payload.fetch.truncated ? " Increase X_MAX_PAGES for a deeper backfill." : "";
+          const refreshedAt = payload.generatedAt ? new Date(payload.generatedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "just now";
+          document.querySelector("#profileStatus").textContent = `${payload.fetch.fetchedTweets.toLocaleString()} posts indexed across ${payload.days.length.toLocaleString()} active days. Refreshed ${refreshedAt}.${truncated}`;
+        }
+        return payload.days;
+      }
+      throw new Error("Expected an array of days or an object with a days array.");
+    }
+
+    function mergeImportedDays(rows) {
+      const byDate = new Map(currentData.map(day => [day.date, day]));
+      rows.forEach(raw => {
+        if (!raw.date) return;
+        byDate.set(raw.date, {
+          date: raw.date,
+          posts: Number(raw.posts || 0),
+          replies: Number(raw.replies || 0),
+          reposts: Number(raw.reposts || 0),
+          likes: Number(raw.likes || 0),
+          bookmarks: Number(raw.bookmarks || 0),
+          impressions: Number(raw.impressions || 0),
+          externalReplies: Number(raw.externalReplies || 0),
+          follows: Number(raw.follows || 0)
+        });
+      });
+      currentData = Array.from(byDate.values()).sort((a, b) => a.date.localeCompare(b.date));
+    }
+
+    function showTooltip(event, day, score) {
+      const tooltip = document.querySelector("#tooltip");
+      const date = new Date(day.date + "T00:00:00");
+      tooltip.innerHTML = `
+        <strong>${score.toLocaleString()} contribution points on ${readableDate(date)}</strong>
+        <span>${scoreParts(day).actionPoints.toLocaleString()} action points, ${scoreParts(day).engagementPoints.toLocaleString()} engagement points</span>
+        <span>${day.posts} posts, ${day.replies} replies, ${day.reposts} reposts</span>
+        <span>${day.likes} likes received, ${day.bookmarks} bookmarks</span>
+        <span>${day.impressions.toLocaleString()} impressions, ${day.follows} follows</span>
+      `;
+      tooltip.classList.add("show");
+      moveTooltip(event);
+    }
+
+    function moveTooltip(event) {
+      const tooltip = document.querySelector("#tooltip");
+      tooltip.style.left = `${event.clientX}px`;
+      tooltip.style.top = `${event.clientY - 12}px`;
+    }
+
+    function hideTooltip() {
+      document.querySelector("#tooltip").classList.remove("show");
+    }
+
+    function applyImport() {
+      try {
+        const rows = normalizeImportedPayload(JSON.parse(document.querySelector("#importBox").value));
+        mergeImportedDays(rows);
+        renderAll();
+      } catch (error) {
+        alert("That JSON could not be imported.");
+      }
+    }
+
+    async function loadLocalActivityFile() {
+      if (window.X_ACTIVITY_DATA) {
+        const payload = window.X_ACTIVITY_DATA;
+        document.querySelector("#importBox").value = JSON.stringify(payload, null, 2);
+        mergeImportedDays(normalizeImportedPayload(payload));
+        renderAll();
+        return;
+      }
+      try {
+        const response = await fetch("x-activity-data.json", { cache: "no-store" });
+        if (!response.ok) return;
+        const payload = await response.json();
+        document.querySelector("#importBox").value = JSON.stringify(payload, null, 2);
+        mergeImportedDays(normalizeImportedPayload(payload));
+        renderAll();
+      } catch {
+        document.querySelector("#profileStatus").textContent = "Real data file was not auto-loaded. Use Load file and select x-activity-data.json, or open this page through a local server.";
+      }
+    }
+
+    function loadSelectedFile(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        try {
+          const payload = JSON.parse(String(reader.result || "{}"));
+          document.querySelector("#importBox").value = JSON.stringify(payload, null, 2);
+          mergeImportedDays(normalizeImportedPayload(payload));
+          renderAll();
+        } catch {
+          alert("That file could not be imported.");
+        }
+      });
+      reader.readAsText(file);
+    }
+
+    function renderAll() {
+      renderStats();
+      renderHeatmap();
+      renderMix();
+    }
+
+    document.querySelector("#windowSelect").addEventListener("change", renderAll);
+    document.querySelector("#accountSelect").addEventListener("change", event => {
+      currentData = generateData(event.target.value);
+      renderImportSample();
+      renderAll();
+    });
+    document.querySelector("#loadSample").addEventListener("click", renderImportSample);
+    document.querySelector("#applyImport").addEventListener("click", applyImport);
+    document.querySelector("#fileImport").addEventListener("change", loadSelectedFile);
+
+    renderAll();
+    renderImportSample();
+    loadLocalActivityFile();
+  </script>
+</body>
+</html>
