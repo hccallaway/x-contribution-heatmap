@@ -1,5 +1,5 @@
-outputs/.env
-outputs/.env.local
+.env
+.env.local
 .DS_Store
 node_modules/
 *.log

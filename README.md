@@ -28,26 +28,28 @@ Engagement currently includes public metrics returned by the X API, such as like
 ```text
 .
 |-- index.html
-`-- outputs/
-    |-- fetch-x-activity.mjs
-    |-- x-activity-contributions.html
-    |-- x-activity-contributions-with-data.html
-    |-- x-activity-data.js
-    `-- x-activity-data.json
+|-- scripts/
+|   `-- fetch-x-activity.mjs
+|-- site/
+|   |-- index.html
+|   `-- data/
+|       |-- x-activity-data.js
+|       `-- x-activity-data.json
+`-- src/
+    `-- x-activity-contributions.html
 ```
 
-`x-activity-contributions.html` is the source page. `x-activity-contributions-with-data.html` is the standalone GitHub Pages page with the latest generated data embedded.
+`src/x-activity-contributions.html` is the editable source page. `site/index.html` is the standalone GitHub Pages page with the latest generated data embedded.
 
 ## Refreshing Data Locally
 
 Create a local env file:
 
 ```sh
-cd outputs
 cp .env.example .env
 ```
 
-Then add an X API bearer token to `outputs/.env`:
+Then add an X API bearer token to `.env`:
 
 ```text
 X_BEARER_TOKEN=...
@@ -56,17 +58,17 @@ X_BEARER_TOKEN=...
 Run the refresh:
 
 ```sh
-node outputs/fetch-x-activity.mjs
+node scripts/fetch-x-activity.mjs
 ```
 
 The refresh writes:
 
-- `outputs/x-activity-data.json`
-- `outputs/x-activity-data.js`
-- `outputs/x-activity-contributions-with-data.html`
+- `site/data/x-activity-data.json`
+- `site/data/x-activity-data.js`
+- `site/index.html`
 
 GitHub Pages only serves committed static files, so local refreshes are not visible on the live site until the generated files are committed and pushed.
 
 ## Privacy
 
-Secrets are not committed. `outputs/.env` is ignored by git and should stay local.
+Secrets are not committed. `.env` is ignored by git and should stay local.

@@ -689,7 +689,7 @@
 
   <div class="tooltip" id="tooltip" role="tooltip"></div>
 
-  <script src="x-activity-data.js"></script>
+  <script src="../site/data/x-activity-data.js"></script>
   <script>
     const dayMs = 24 * 60 * 60 * 1000;
     const today = new Date(2026, 5, 12);
@@ -957,7 +957,7 @@
         return;
       }
       try {
-        const response = await fetch("x-activity-data.json", { cache: "no-store" });
+        const response = await fetch("../site/data/x-activity-data.json", { cache: "no-store" });
         if (!response.ok) return;
         const payload = await response.json();
         mergeImportedDays(normalizeImportedPayload(payload));

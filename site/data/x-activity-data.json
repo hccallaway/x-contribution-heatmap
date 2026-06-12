@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-12T04:39:32.429Z",
+  "generatedAt": "2026-06-12T04:58:15.008Z",
   "source": "x-api-v2-user-tweets",
   "profile": {
     "id": "2681209458",
@@ -9,17 +9,17 @@
     "location": "San Francisco, CA",
     "verified": false,
     "publicMetrics": {
-      "followers_count": 118,
+      "followers_count": 117,
       "following_count": 562,
-      "tweet_count": 110,
+      "tweet_count": 111,
       "listed_count": 2,
-      "like_count": 307,
-      "media_count": 31
+      "like_count": 308,
+      "media_count": 32
     }
   },
   "fetch": {
     "pages": 2,
-    "fetchedTweets": 109,
+    "fetchedTweets": 110,
     "truncated": false
   },
   "days": [
@@ -548,6 +548,17 @@
       "likes": 1,
       "bookmarks": 0,
       "impressions": 53,
+      "externalReplies": 0,
+      "follows": 0
+    },
+    {
+      "date": "2026-06-12",
+      "posts": 1,
+      "replies": 0,
+      "reposts": 0,
+      "likes": 1,
+      "bookmarks": 0,
+      "impressions": 9,
       "externalReplies": 0,
       "follows": 0
     }

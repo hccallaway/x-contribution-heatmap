@@ -1,11 +1,13 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 
-const envPath = new URL(".env", import.meta.url);
-const outputPath = new URL("x-activity-data.json", import.meta.url);
-const scriptOutputPath = new URL("x-activity-data.js", import.meta.url);
-const htmlPath = new URL("x-activity-contributions.html", import.meta.url);
-const standaloneHtmlPath = new URL("x-activity-contributions-with-data.html", import.meta.url);
+const rootPath = new URL("../", import.meta.url);
+const envPath = new URL(".env", rootPath);
+const legacyEnvPath = new URL("outputs/.env", rootPath);
+const outputPath = new URL("site/data/x-activity-data.json", rootPath);
+const scriptOutputPath = new URL("site/data/x-activity-data.js", rootPath);
+const htmlPath = new URL("src/x-activity-contributions.html", rootPath);
+const standaloneHtmlPath = new URL("site/index.html", rootPath);
 
 function loadDotEnv(text) {
   for (const line of text.split(/\r?\n/)) {
@@ -21,6 +23,8 @@ function loadDotEnv(text) {
 
 if (existsSync(envPath)) {
   loadDotEnv(await readFile(envPath, "utf8"));
+} else if (existsSync(legacyEnvPath)) {
+  loadDotEnv(await readFile(legacyEnvPath, "utf8"));
 }
 
 const bearerToken = process.env.X_BEARER_TOKEN;
@@ -28,7 +32,7 @@ const username = process.env.X_USERNAME || "hadleycallaway";
 const maxPages = Number(process.env.X_MAX_PAGES || 8);
 
 if (!bearerToken || bearerToken.includes("replace-with")) {
-  console.error("Missing X_BEARER_TOKEN. Copy outputs/.env.example to outputs/.env and add your bearer token.");
+  console.error("Missing X_BEARER_TOKEN. Copy .env.example to .env and add your bearer token.");
   process.exit(1);
 }
 
@@ -151,7 +155,7 @@ await writeFile(
 if (existsSync(htmlPath)) {
   const html = await readFile(htmlPath, "utf8");
   const injectedHtml = html.replace(
-    '<script src="x-activity-data.js"></script>',
+    '<script src="../site/data/x-activity-data.js"></script>',
     `<script>window.X_ACTIVITY_DATA = ${JSON.stringify(payload)};</script>`
   );
   await writeFile(standaloneHtmlPath, injectedHtml, "utf8");
