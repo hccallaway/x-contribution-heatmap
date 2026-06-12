@@ -473,77 +473,6 @@
       background: var(--c);
     }
 
-    .code-panel {
-      padding: 16px;
-    }
-
-    .code-panel summary {
-      cursor: pointer;
-      font-weight: 650;
-      list-style: none;
-    }
-
-    .code-panel summary::-webkit-details-marker {
-      display: none;
-    }
-
-    .code-panel summary::after {
-      content: "Open";
-      float: right;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 520;
-    }
-
-    .code-panel[open] summary::after {
-      content: "Close";
-    }
-
-    .code-panel textarea {
-      width: 100%;
-      min-height: 180px;
-      resize: vertical;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      padding: 10px;
-      background: #f6f8fa;
-      color: #24292f;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 12px;
-      line-height: 1.45;
-    }
-
-    .import-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .file-loader {
-      display: inline-flex;
-      align-items: center;
-      height: 34px;
-      padding: 0 10px;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: var(--panel);
-      cursor: pointer;
-    }
-
-    .file-loader:hover {
-      border-color: #8c959f;
-      background: #f6f8fa;
-    }
-
-    .file-loader input {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      opacity: 0;
-      pointer-events: none;
-    }
-
     .model {
       margin-top: 16px;
       border-top: 1px solid var(--soft-line);
@@ -694,19 +623,6 @@
         <p class="model">Unified scoring model: <code>post * 6</code>, <code>reply * 3</code>, <code>repost * 2</code>, <code>bookmark * 2</code>, plus engagement from likes, impressions, replies received, and follows.</p>
       </div>
 
-      <details class="panel code-panel">
-        <summary>Data import</summary>
-        <p class="model">Paste daily JSON later from the X API, a scheduled scraper you control, or the account archive export.</p>
-        <textarea id="importBox" spellcheck="false" aria-label="Import JSON"></textarea>
-        <div class="import-actions">
-          <button id="loadSample">Load sample</button>
-          <button id="applyImport">Apply JSON</button>
-          <label class="file-loader">
-            Load file
-            <input id="fileImport" type="file" accept=".json,application/json">
-          </label>
-        </div>
-      </details>
     </section>
   </main>
 
@@ -904,34 +820,6 @@
       `).join("");
     }
 
-    function renderImportSample() {
-      const sample = [
-        {
-          date: "2026-06-12",
-          posts: 1,
-          replies: 3,
-          reposts: 0,
-          likes: 12,
-          bookmarks: 2,
-          impressions: 1400,
-          externalReplies: 4,
-          follows: 1
-        },
-        {
-          date: "2026-06-11",
-          posts: 0,
-          replies: 5,
-          reposts: 1,
-          likes: 18,
-          bookmarks: 1,
-          impressions: 360,
-          externalReplies: 2,
-          follows: 0
-        }
-      ];
-      document.querySelector("#importBox").value = JSON.stringify(sample, null, 2);
-    }
-
     function normalizeImportedPayload(payload) {
       if (Array.isArray(payload)) return payload;
       if (Array.isArray(payload.days)) {
@@ -1000,20 +888,9 @@
       document.querySelector("#tooltip").classList.remove("show");
     }
 
-    function applyImport() {
-      try {
-        const rows = normalizeImportedPayload(JSON.parse(document.querySelector("#importBox").value));
-        mergeImportedDays(rows);
-        renderAll();
-      } catch (error) {
-        alert("That JSON could not be imported.");
-      }
-    }
-
     async function loadLocalActivityFile() {
       if (window.X_ACTIVITY_DATA) {
         const payload = window.X_ACTIVITY_DATA;
-        document.querySelector("#importBox").value = JSON.stringify(payload, null, 2);
         mergeImportedDays(normalizeImportedPayload(payload));
         renderAll();
         return;
@@ -1022,29 +899,11 @@
         const response = await fetch("x-activity-data.json", { cache: "no-store" });
         if (!response.ok) return;
         const payload = await response.json();
-        document.querySelector("#importBox").value = JSON.stringify(payload, null, 2);
         mergeImportedDays(normalizeImportedPayload(payload));
         renderAll();
       } catch {
-        document.querySelector("#profileStatus").textContent = "Real data file was not auto-loaded. Use Load file and select x-activity-data.json, or open this page through a local server.";
+        document.querySelector("#profileStatus").textContent = "Real data file was not auto-loaded. Run the scheduled refresh or open this page through a local server.";
       }
-    }
-
-    function loadSelectedFile(event) {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.addEventListener("load", () => {
-        try {
-          const payload = JSON.parse(String(reader.result || "{}"));
-          document.querySelector("#importBox").value = JSON.stringify(payload, null, 2);
-          mergeImportedDays(normalizeImportedPayload(payload));
-          renderAll();
-        } catch {
-          alert("That file could not be imported.");
-        }
-      });
-      reader.readAsText(file);
     }
 
     function renderAll() {
@@ -1054,12 +913,8 @@
     }
 
     document.querySelector("#windowSelect").addEventListener("change", renderAll);
-    document.querySelector("#loadSample").addEventListener("click", renderImportSample);
-    document.querySelector("#applyImport").addEventListener("click", applyImport);
-    document.querySelector("#fileImport").addEventListener("change", loadSelectedFile);
 
     renderAll();
-    renderImportSample();
     loadLocalActivityFile();
   </script>
 </body>
