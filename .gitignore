@@ -1,2 +1,6 @@
 outputs/.env
+outputs/.env.local
 .DS_Store
+node_modules/
+*.log
+work/

@@ -28,7 +28,7 @@ const username = process.env.X_USERNAME || "hadleycallaway";
 const maxPages = Number(process.env.X_MAX_PAGES || 8);
 
 if (!bearerToken || bearerToken.includes("replace-with")) {
-  console.error("Missing X_BEARER_TOKEN. Copy .env.example to .env and add your bearer token.");
+  console.error("Missing X_BEARER_TOKEN. Copy outputs/.env.example to outputs/.env and add your bearer token.");
   process.exit(1);
 }
 
